@@ -9,7 +9,7 @@ if "reset_key" not in st.session_state:
 if "edit_items" not in st.session_state:
     st.session_state.edit_items = [{"element": "", "level": "Không thay đổi"}]
     
-if "merge_images" not in st.session_state:
+if "merge_images" not in st.session_state:Giữ nguyên 100% khuôn mặt (các) chủ thể chính trong ảnh gốc
     st.session_state.merge_images = ["Ảnh 1", "Ảnh 2"]
 
 # Hàm reset toàn bộ dữ liệu (Sử dụng mẹo đổi key để ép Streamlit làm mới)
@@ -21,7 +21,7 @@ def xoa_toan_bo():
     except Exception as e:
         st.error(f"Có lỗi nhỏ khi xóa dữ liệu: {e}")
 
-# --- KHO DỮ LIỆU KHỔNG LỒ ---
+# --- KHO DỮ LIỆU KHỔNG LỒ (OPTIONS ĐÃ ĐƯỢC NÂNG CẤP) ---
 chu_the_opts = [
     "Không chọn",
     "Cô gái trẻ", "Chàng trai thanh niên", "Ông lão râu tóc bạc phơ", "Bà lão hiền từ", "Em bé bụ bẫm", 
@@ -100,13 +100,31 @@ khong_khi_opts = [
     "Kỳ dị và điên rồ (Whimsical/Bizarre)", "Ngột ngạt và khép kín (Claustrophobic)", "Thiêng liêng và thanh tẩy (Divine/Holy)", "Hoang tàn hậu tận thế (Apocalyptic)", "Choáng ngợp tâm lý (Psychedelic)", "U sầu và tiếc nuối (Melancholic)"
 ]
 
+# Tùy chọn Màu sắc chủ đạo (MỚI)
+mau_sac_opts = [
+    "Không chọn",
+    "Trắng đen (Black & White) - Cổ điển, tương phản",
+    "Đơn sắc (Monochrome) - Chỉ dùng các sắc độ của một màu",
+    "Màu Pastel nhẹ nhàng - Ngọt ngào, dịu mắt",
+    "Sặc sỡ, rực rỡ (Vibrant/Colorful) - Năng động, bắt mắt",
+    "Tông màu lạnh (Cool tones) - Xanh dương, lục, tím ngắt",
+    "Tông màu ấm (Warm tones) - Đỏ, cam, vàng rực",
+    "Màu Sepia hoài cổ - Sắc nâu vàng của ảnh cũ",
+    "Màu Neon phát sáng - Rực rỡ trong đêm",
+    "Màu Cyberpunk - Xanh ngọc và hồng/tím chói lóa",
+    "Màu Retro thập niên 80 - Phai màu, nhiễu hạt",
+    "Màu tương phản cao (High Contrast) - Đậm đà, sắc nét",
+    "Tông màu trầm/phai (Muted/Desaturated) - U buồn, điện ảnh",
+    "Màu hoàng kim (Golden/Champagne) - Sang trọng, lấp lánh"
+]
+
 bat_buoc_opts = [
-    "Giữ nguyên 100% khuôn mặt chủ thể trong ảnh gốc",
+    "Giữ nguyên 100% khuôn mặt (các) chủ thể chính trong ảnh gốc",
     "Tuyệt đối không có chữ viết, văn bản hay watermark trong ảnh",
     "Giữ đúng màu sắc và kết cấu trang phục của ảnh gốc",
     "Không làm biến dạng tay, chân, ngón tay của chủ thể",
     "Hình ảnh phải sắc nét ở độ phân giải cao nhất (8K, cực kỳ chi tiết)",
-    "Chỉ xuất hiện duy nhất 1 chủ thể, không có nhân vật phụ",
+    "Chỉ xuất hiện duy nhất chủ thể chính, không có nhân vật phụ",
     "Giữ nguyên bối cảnh nền của ảnh gốc, chỉ thay đổi chủ thể"
 ]
 
@@ -163,6 +181,9 @@ def ui_chung():
         goc_may = st.selectbox("6. 📐 Góc máy & Bố cục:", goc_may_opts, key=f"goc_may_{r_key}")
         goc_may_tu_nhap = st.text_input("✍️ Tự nhập góc máy:", key=f"goc_may_nhap_{r_key}")
         
+        mau_sac = st.selectbox("8. 🎨 Màu sắc chủ đạo:", mau_sac_opts, key=f"mau_sac_{r_key}")
+        mau_sac_tu_nhap = st.text_input("✍️ Tự nhập màu sắc:", key=f"mau_sac_nhap_{r_key}")
+        
     with col2:
         boi_canh = st.selectbox("3. 🏞️ Bối cảnh (Setting):", boi_canh_opts, key=f"boi_canh_{r_key}")
         boi_canh_tu_nhap = st.text_input("✍️ Tự nhập bối cảnh:", key=f"boi_canh_nhap_{r_key}")
@@ -172,6 +193,10 @@ def ui_chung():
         
         khong_khi = st.multiselect("7. 🌤️ Bầu không khí (Mood/Vibe):", khong_khi_opts, placeholder="Chọn các bầu không khí kết hợp...", key=f"khong_khi_{r_key}")
         khong_khi_tu_nhap = st.text_input("✍️ Tự nhập không khí (nếu có):", key=f"khong_khi_nhap_{r_key}")
+
+    st.markdown("---")
+    # Lựa chọn yêu cầu AI mô phỏng y hệt ảnh phân tích cũ
+    mo_phong = st.checkbox("🔮 **Kế thừa Phân Tích Trước:** Bắt AI phải giữ y hệt các thông số của bức ảnh đã phân tích trước đó (nếu có). Những yếu tố nào bạn 'Không chọn' ở trên thì AI sẽ tự động lấy từ ảnh phân tích để đắp vào.", key=f"mo_phong_{r_key}")
 
     st.markdown("---")
     st.subheader("📌 Yêu cầu bổ sung")
@@ -186,7 +211,8 @@ def ui_chung():
         "hanh_dong": hanh_dong, "hanh_dong_tu_nhap": hanh_dong_tu_nhap, "boi_canh": boi_canh, "boi_canh_tu_nhap": boi_canh_tu_nhap, 
         "phong_cach": phong_cach, "phong_cach_tu_nhap": phong_cach_tu_nhap, "anh_sang": anh_sang, "anh_sang_tu_nhap": anh_sang_tu_nhap, 
         "goc_may": goc_may, "goc_may_tu_nhap": goc_may_tu_nhap, "khong_khi": khong_khi, 
-        "khong_khi_tu_nhap": khong_khi_tu_nhap, "bat_buoc": bat_buoc, 
+        "khong_khi_tu_nhap": khong_khi_tu_nhap, "mau_sac": mau_sac, "mau_sac_tu_nhap": mau_sac_tu_nhap, 
+        "mo_phong": mo_phong, "bat_buoc": bat_buoc, 
         "bat_buoc_khac": bat_buoc_khac, "so_luong": so_luong
     }
 
@@ -214,6 +240,7 @@ def tao_prompt(data, context="tao_moi", thong_tin_sua=""):
         c_phong_cach = data['phong_cach_tu_nhap'] if data['phong_cach_tu_nhap'] else data['phong_cach']
         c_anh_sang = data['anh_sang_tu_nhap'] if data['anh_sang_tu_nhap'] else data['anh_sang']
         c_goc_may = data['goc_may_tu_nhap'] if data['goc_may_tu_nhap'] else data['goc_may']
+        c_mau_sac = data['mau_sac_tu_nhap'] if data['mau_sac_tu_nhap'] else data['mau_sac']
 
         if c_chu_the and c_chu_the != "Không chọn": 
             prompt += f"Chủ thể chính: {xu_ly_chuoi(c_chu_the)}\n"
@@ -232,10 +259,15 @@ def tao_prompt(data, context="tao_moi", thong_tin_sua=""):
             prompt += f"Ánh sáng: {xu_ly_chuoi(c_anh_sang)}\n"
         if c_goc_may and c_goc_may != "Không chọn": 
             prompt += f"Góc máy và bố cục: {xu_ly_chuoi(c_goc_may)}\n"
+        if c_mau_sac and c_mau_sac != "Không chọn": 
+            prompt += f"Màu sắc chủ đạo: {xu_ly_chuoi(c_mau_sac)}\n"
         
         list_kk = data['khong_khi'].copy()
         if data['khong_khi_tu_nhap']: list_kk.append(data['khong_khi_tu_nhap'])
         if list_kk: prompt += f"Bầu không khí: {', '.join(list_kk)}\n"
+        
+        if data.get('mo_phong'):
+            prompt += "\n**LƯU Ý QUAN TRỌNG:** Hãy áp dụng y hệt các thông số của bức ảnh mà tôi đã yêu cầu bạn phân tích trước đó. Các thông số mới tôi vừa liệt kê ở trên sẽ được ưu tiên cao nhất. Đối với bất kỳ yếu tố nào không được nhắc đến ở trên (ví dụ như để trống hoặc không có yêu cầu cụ thể), hãy tự động lấy thông số tương ứng từ bức ảnh đã phân tích để mô phỏng và hoàn thiện bức ảnh mới này.\n"
         
         list_bb = data['bat_buoc'].copy()
         if data['bat_buoc_khac']: list_bb.append(data['bat_buoc_khac'])
@@ -333,7 +365,7 @@ try:
     elif task == "🔍 Phân tích ảnh":
         st.info("🔍 Hãy đưa ảnh cho AI soi thật kỹ xem bên trong có gì nhé!")
         if st.button("🚀 Tạo Prompt Phân Tích", type="primary"):
-            prompt_pt = "Hãy đóng vai là một chuyên gia phân tích hình ảnh. Hãy soi thật kỹ bức ảnh tôi vừa đính kèm và mô tả lại một cách cực kỳ chi tiết tất cả các yếu tố xuất hiện trong ảnh (bao gồm: Chủ thể chính, hành động, bối cảnh xung quanh, phong cách nghệ thuật, cách sắp đặt ánh sáng, góc máy ảnh, bố cục, tỷ lệ khung hình của bức ảnh và bầu không khí chung). Hãy ghi nhớ những thông tin này để làm dữ liệu tham khảo cho các yêu cầu chỉnh sửa hoặc tạo ảnh tiếp theo của tôi. Cuối cùng, hãy đưa ra một vài gợi ý thú vị để nâng cấp hoặc biến tấu bức ảnh này cho ấn tượng hơn."
+            prompt_pt = "Hãy đóng vai là một chuyên gia phân tích hình ảnh. Hãy soi thật kỹ bức ảnh tôi vừa đính kèm và mô tả lại một cách cực kỳ chi tiết tất cả các yếu tố xuất hiện trong ảnh (bao gồm: Chủ thể chính, hành động, bối cảnh xung quanh, phong cách nghệ thuật, cách sắp đặt ánh sáng, góc máy ảnh, bố cục, tỷ lệ khung hình của bức ảnh và bầu không khí chung). Hãy ghi nhớ những thông tin này để làm dữ liệu tham khảo cho các yêu cầu chỉnh sửa hoặc tạo ảnh tiếp theo của tôi."
             st.success("🎉 Bạn rà chuột vào góc trên cùng bên phải của ô xám bên dưới, nhấn vào biểu tượng Copy là xong:")
             st.code(prompt_pt, language="text")
 
