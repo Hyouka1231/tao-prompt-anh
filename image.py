@@ -21,7 +21,7 @@ def xoa_toan_bo():
     except Exception as e:
         st.error(f"Có lỗi nhỏ khi xóa dữ liệu: {e}")
 
-# --- KHO DỮ LIỆU KHỔNG LỒ (OPTIONS ĐÃ ĐƯỢC NÂNG CẤP) ---
+# --- KHO DỮ LIỆU KHỔNG LỒ ---
 chu_the_opts = [
     "Không chọn",
     "Cô gái trẻ", "Chàng trai thanh niên", "Ông lão râu tóc bạc phơ", "Bà lão hiền từ", "Em bé bụ bẫm", 
@@ -96,11 +96,10 @@ goc_may_opts = [
 ]
 
 khong_khi_opts = [
-    "Bình yên, tĩnh lặng, thư thái", "Vui nhộn, tươi sáng, rộn ràng", "Bí ẩn, gây tò mò, mờ ảo", "Lãng mạn, ngọt ngào, ấm áp", "U ám, rùng rợn, giật gân, đáng sợ", "Mộng mơ, huyền ảo như cổ tích", "Hoài cổ (Nostalgic/Retro), màu úa vàng", "Hào hùng, sử thi, choáng ngợp", "Sôi động, tốc độ, tràn đầy năng lượng", "Cô đơn, trống trải, tĩnh mịch", "Kịch tính, căng thẳng", "Thần tiên, ma thuật", "Sang trọng, quyền quý", "Cybernetic, máy móc lạnh lẽo",
+    "Bình yên, tĩnh lặng, thư thái", "Vui nhộn, tươi sáng, rộn ràng", "Bí ẩn, gây tò mò, mờ ảo", "Lãng mạn, ngọt ngào, ấm áp", "U ám, rùng rợn, giật gân, đáng sợ", "Mộng mơ, huyền ảo như cổ tích", "Hoài cổ (Nostalgic/Retro), màu úa vàng", "Hào hùng, sử thi, choángợp", "Sôi động, tốc độ, tràn đầy năng lượng", "Cô đơn, trống trải, tĩnh mịch", "Kịch tính, căng thẳng", "Thần tiên, ma thuật", "Sang trọng, quyền quý", "Cybernetic, máy móc lạnh lẽo",
     "Kỳ dị và điên rồ (Whimsical/Bizarre)", "Ngột ngạt và khép kín (Claustrophobic)", "Thiêng liêng và thanh tẩy (Divine/Holy)", "Hoang tàn hậu tận thế (Apocalyptic)", "Choáng ngợp tâm lý (Psychedelic)", "U sầu và tiếc nuối (Melancholic)"
 ]
 
-# Tùy chọn Màu sắc chủ đạo
 mau_sac_opts = [
     "Không chọn",
     "Trắng đen (Black & White) - Cổ điển, tương phản",
@@ -118,9 +117,9 @@ mau_sac_opts = [
     "Màu hoàng kim (Golden/Champagne) - Sang trọng, lấp lánh"
 ]
 
-# Cập nhật Prompt bắt buộc mạnh mẽ hơn cho việc giữ nguyên khuôn mặt
+# Câu lệnh yêu cầu AI đã được cập nhật, bỏ ghi chú dư thừa ra khỏi luồng prompt
 bat_buoc_opts = [
-    "NGHIÊM CẤM THAY ĐỔI KHUÔN MẶT: Giữ nguyên 100% hình dáng, đường nét và góc độ khuôn mặt của chủ thể trong ảnh gốc. Không được tự ý làm đẹp, bóp méo hay biến dạng. (Lưu ý: Bạn phải đính kèm thêm ảnh cung cấp góc mặt mới nếu muốn AI thay đổi góc nhìn của chủ thể)",
+    "NGHIÊM CẤM THAY ĐỔI KHUÔN MẶT: Giữ nguyên 100% hình dáng, đường nét, biểu cảm nét mặt và góc độ khuôn mặt của chủ thể trong ảnh gốc. Không được tự ý làm đẹp, bóp méo hay biến dạng.",
     "Tuyệt đối không có chữ viết, văn bản hay watermark trong ảnh",
     "Giữ đúng màu sắc và kết cấu trang phục của ảnh gốc",
     "Không làm biến dạng tay, chân, ngón tay của chủ thể",
@@ -196,12 +195,15 @@ def ui_chung():
         khong_khi_tu_nhap = st.text_input("✍️ Tự nhập không khí (nếu có):", key=f"khong_khi_nhap_{r_key}")
 
     st.markdown("---")
-    # Thay thế nút check bằng ô nhập văn bản lớn để dán kết quả phân tích
-    du_lieu_phan_tich = st.text_area("🔮 **Kế thừa Thông Số Ảnh Cũ:** Nếu bạn đã dùng chức năng 'Phân tích ảnh', hãy dán kết quả AI trả về vào đây. AI sẽ tự động đắp các thông số đó vào ảnh mới (Các thiết lập mới bạn vừa chọn ở trên vẫn sẽ được ưu tiên cao nhất).", height=100, key=f"du_lieu_phan_tich_{r_key}")
+    du_lieu_phan_tich = st.text_area("🔮 **Kế thừa Thông Số Ảnh Cũ:** Nếu bạn đã dùng chức năng 'Phân tích ảnh', hãy dán kết quả AI trả về vào đây. AI sẽ tự động đắp các thông số đó vào ảnh mới, bạn không cần phải chọn thêm thông số nào.", height=100, key=f"du_lieu_phan_tich_{r_key}")
 
     st.markdown("---")
     st.subheader("📌 Yêu cầu bổ sung")
     bat_buoc = st.multiselect("🛑 Các yêu cầu AI TUYỆT ĐỐI BẮT BUỘC tuân thủ:", bat_buoc_opts, placeholder="Chọn các yêu cầu bắt buộc...", key=f"bat_buoc_{r_key}")
+    
+    # Hiển thị ghi chú cho người dùng thấy nhưng không đưa vào Prompt của AI
+    st.info("💡 Lưu ý nhỏ cho bạn: Nếu bạn chọn yêu cầu 'Giữ nguyên khuôn mặt' nhưng lại muốn AI đổi góc nhìn của chủ thể (ví dụ từ nhìn thẳng sang nhìn nghiêng), bạn phải tải kèm thêm bức ảnh mẫu cung cấp góc mặt nghiêng đó lên nhé!")
+    
     bat_buoc_khac = st.text_area("✍️ Tự nhập thêm yêu cầu bắt buộc / tuyệt đối tránh:", key=f"bat_buoc_khac_{r_key}")
     
     so_luong = st.number_input("🔢 Số lượng ảnh cần tạo:", min_value=1, value=1, key=f"so_luong_{r_key}")
@@ -267,10 +269,9 @@ def tao_prompt(data, context="tao_moi", thong_tin_sua=""):
         if data['khong_khi_tu_nhap']: list_kk.append(data['khong_khi_tu_nhap'])
         if list_kk: prompt += f"Bầu không khí: {', '.join(list_kk)}\n"
         
-        # Nếu người dùng có dán kết quả phân tích cũ vào
+        # Chỉ dán trực tiếp dữ liệu phân tích cũ vào, bỏ các câu tiêu đề thừa thãi
         if data.get('du_lieu_phan_tich') and data['du_lieu_phan_tich'].strip() != "":
-            prompt += f"\n**THAM KHẢO THÔNG SỐ TỪ ẢNH GỐC:**\nDưới đây là các thông số của một bức ảnh mà tôi muốn mô phỏng lại:\n{data['du_lieu_phan_tich'].strip()}\n"
-            prompt += "Lưu ý: Hãy ưu tiên áp dụng các thiết lập mới mà tôi đã liệt kê ở phần trên cùng. Đối với bất kỳ yếu tố nào tôi để trống hoặc không nhắc đến, hãy tự động lấy thông số tương ứng từ 'Tham khảo thông số từ ảnh gốc' để đắp vào cho bức ảnh mới này.\n"
+            prompt += f"\n{data['du_lieu_phan_tich'].strip()}\n"
         
         list_bb = data['bat_buoc'].copy()
         if data['bat_buoc_khac']: list_bb.append(data['bat_buoc_khac'])
@@ -290,7 +291,6 @@ col_header1, col_header2 = st.columns([4, 1])
 with col_header2:
     st.button("🗑️ Xóa thông tin (Clear All)", on_click=xoa_toan_bo, use_container_width=True)
 
-# Thêm icon cho các Lựa chọn (Tabs)
 task = st.radio("🛠️ Chọn thao tác bạn muốn thực hiện:", [
     "🎨 Tạo ảnh mới hoàn toàn", 
     "✏️ Chỉnh sửa ảnh có sẵn", 
@@ -368,8 +368,8 @@ try:
     elif task == "🔍 Phân tích ảnh":
         st.info("🔍 Hãy đưa ảnh cho AI soi thật kỹ xem bên trong có gì nhé!")
         if st.button("🚀 Tạo Prompt Phân Tích", type="primary"):
-            # Yêu cầu AI chỉ trả về gạch đầu dòng, không chào hỏi, không khuyên bảo
-            prompt_pt = "Hãy đóng vai là một chuyên gia phân tích hình ảnh. Hãy soi thật kỹ bức ảnh tôi vừa đính kèm và mô tả lại một cách cực kỳ chi tiết tất cả các yếu tố xuất hiện trong ảnh. Bắt buộc bao gồm các yếu tố sau: Chủ thể chính, Hành động, Đặc điểm nổi bật, Bối cảnh xung quanh, Phong cách nghệ thuật, Cách sắp đặt ánh sáng, Màu sắc chủ đạo, Góc máy ảnh/Bố cục, Bầu không khí chung và Tỷ lệ khung hình của bức ảnh.\n\nCHỈ THỊ NGHIÊM NGẶT: Bạn CHỈ ĐƯỢC trả về một danh sách các gạch đầu dòng chứa thông tin phân tích. TUYỆT ĐỐI KHÔNG mở bài chào hỏi, KHÔNG kết luận, KHÔNG đưa ra lời khuyên nâng cấp, KHÔNG giải thích dài dòng. Chỉ đưa ra các thông số thuần túy để tôi có thể dễ dàng sao chép làm dữ liệu cho câu lệnh tạo ảnh tiếp theo."
+            # Yêu cầu AI chỉ trả về text thuần, không format rườm rà
+            prompt_pt = "Hãy đóng vai là một chuyên gia phân tích hình ảnh. Hãy soi thật kỹ bức ảnh tôi vừa đính kèm và mô tả lại một cách cực kỳ chi tiết tất cả các yếu tố xuất hiện trong ảnh. Bắt buộc bao gồm các yếu tố sau: Chủ thể chính, Hành động, Đặc điểm nổi bật, Bối cảnh xung quanh, Phong cách nghệ thuật, Cách sắp đặt ánh sáng, Màu sắc chủ đạo, Góc máy ảnh/Bố cục, Bầu không khí chung và Tỷ lệ khung hình của bức ảnh.\n\nCHỈ THỊ NGHIÊM NGẶT: Bạn CHỈ ĐƯỢC trả về một đoạn văn bản thuần túy (plain text), các thông tin nối tiếp nhau hoặc cách nhau bởi dấu phẩy. TUYỆT ĐỐI KHÔNG sử dụng ký tự định dạng markdown như dấu sao (**) để in đậm, KHÔNG dùng gạch đầu dòng (- hay *), KHÔNG xuống dòng không cần thiết. KHÔNG mở bài chào hỏi, KHÔNG kết luận, KHÔNG khuyên bảo."
             st.success("🎉 Bạn rà chuột vào góc trên cùng bên phải của ô xám bên dưới, nhấn vào biểu tượng Copy là xong:")
             st.code(prompt_pt, language="text")
 
