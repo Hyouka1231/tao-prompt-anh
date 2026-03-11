@@ -100,7 +100,7 @@ khong_khi_opts = [
     "Kỳ dị và điên rồ (Whimsical/Bizarre)", "Ngột ngạt và khép kín (Claustrophobic)", "Thiêng liêng và thanh tẩy (Divine/Holy)", "Hoang tàn hậu tận thế (Apocalyptic)", "Choáng ngợp tâm lý (Psychedelic)", "U sầu và tiếc nuối (Melancholic)"
 ]
 
-# Tùy chọn Màu sắc chủ đạo (MỚI)
+# Tùy chọn Màu sắc chủ đạo
 mau_sac_opts = [
     "Không chọn",
     "Trắng đen (Black & White) - Cổ điển, tương phản",
@@ -118,8 +118,9 @@ mau_sac_opts = [
     "Màu hoàng kim (Golden/Champagne) - Sang trọng, lấp lánh"
 ]
 
+# Cập nhật Prompt bắt buộc mạnh mẽ hơn cho việc giữ nguyên khuôn mặt
 bat_buoc_opts = [
-    "Giữ nguyên 100% khuôn mặt (các) chủ thể chính trong ảnh gốc",
+    "NGHIÊM CẤM THAY ĐỔI KHUÔN MẶT: Giữ nguyên 100% hình dáng, đường nét và góc độ khuôn mặt của chủ thể trong ảnh gốc. Không được tự ý làm đẹp, bóp méo hay biến dạng. (Lưu ý: Bạn phải đính kèm thêm ảnh cung cấp góc mặt mới nếu muốn AI thay đổi góc nhìn của chủ thể)",
     "Tuyệt đối không có chữ viết, văn bản hay watermark trong ảnh",
     "Giữ đúng màu sắc và kết cấu trang phục của ảnh gốc",
     "Không làm biến dạng tay, chân, ngón tay của chủ thể",
@@ -195,8 +196,8 @@ def ui_chung():
         khong_khi_tu_nhap = st.text_input("✍️ Tự nhập không khí (nếu có):", key=f"khong_khi_nhap_{r_key}")
 
     st.markdown("---")
-    # Lựa chọn yêu cầu AI mô phỏng y hệt ảnh phân tích cũ
-    mo_phong = st.checkbox("🔮 **Kế thừa Phân Tích Trước:** Bắt AI phải giữ y hệt các thông số của bức ảnh đã phân tích trước đó (nếu có). Những yếu tố nào bạn 'Không chọn' ở trên thì AI sẽ tự động lấy từ ảnh phân tích để đắp vào.", key=f"mo_phong_{r_key}")
+    # Thay thế nút check bằng ô nhập văn bản lớn để dán kết quả phân tích
+    du_lieu_phan_tich = st.text_area("🔮 **Kế thừa Thông Số Ảnh Cũ:** Nếu bạn đã dùng chức năng 'Phân tích ảnh', hãy dán kết quả AI trả về vào đây. AI sẽ tự động đắp các thông số đó vào ảnh mới (Các thiết lập mới bạn vừa chọn ở trên vẫn sẽ được ưu tiên cao nhất).", height=100, key=f"du_lieu_phan_tich_{r_key}")
 
     st.markdown("---")
     st.subheader("📌 Yêu cầu bổ sung")
@@ -212,7 +213,7 @@ def ui_chung():
         "phong_cach": phong_cach, "phong_cach_tu_nhap": phong_cach_tu_nhap, "anh_sang": anh_sang, "anh_sang_tu_nhap": anh_sang_tu_nhap, 
         "goc_may": goc_may, "goc_may_tu_nhap": goc_may_tu_nhap, "khong_khi": khong_khi, 
         "khong_khi_tu_nhap": khong_khi_tu_nhap, "mau_sac": mau_sac, "mau_sac_tu_nhap": mau_sac_tu_nhap, 
-        "mo_phong": mo_phong, "bat_buoc": bat_buoc, 
+        "du_lieu_phan_tich": du_lieu_phan_tich, "bat_buoc": bat_buoc, 
         "bat_buoc_khac": bat_buoc_khac, "so_luong": so_luong
     }
 
@@ -266,13 +267,15 @@ def tao_prompt(data, context="tao_moi", thong_tin_sua=""):
         if data['khong_khi_tu_nhap']: list_kk.append(data['khong_khi_tu_nhap'])
         if list_kk: prompt += f"Bầu không khí: {', '.join(list_kk)}\n"
         
-        if data.get('mo_phong'):
-            prompt += "\n**LƯU Ý QUAN TRỌNG:** Hãy áp dụng y hệt các thông số của bức ảnh mà tôi đã yêu cầu bạn phân tích trước đó. Các thông số mới tôi vừa liệt kê ở trên sẽ được ưu tiên cao nhất. Đối với bất kỳ yếu tố nào không được nhắc đến ở trên (ví dụ như để trống hoặc không có yêu cầu cụ thể), hãy tự động lấy thông số tương ứng từ bức ảnh đã phân tích để mô phỏng và hoàn thiện bức ảnh mới này.\n"
+        # Nếu người dùng có dán kết quả phân tích cũ vào
+        if data.get('du_lieu_phan_tich') and data['du_lieu_phan_tich'].strip() != "":
+            prompt += f"\n**THAM KHẢO THÔNG SỐ TỪ ẢNH GỐC:**\nDưới đây là các thông số của một bức ảnh mà tôi muốn mô phỏng lại:\n{data['du_lieu_phan_tich'].strip()}\n"
+            prompt += "Lưu ý: Hãy ưu tiên áp dụng các thiết lập mới mà tôi đã liệt kê ở phần trên cùng. Đối với bất kỳ yếu tố nào tôi để trống hoặc không nhắc đến, hãy tự động lấy thông số tương ứng từ 'Tham khảo thông số từ ảnh gốc' để đắp vào cho bức ảnh mới này.\n"
         
         list_bb = data['bat_buoc'].copy()
         if data['bat_buoc_khac']: list_bb.append(data['bat_buoc_khac'])
         if list_bb: 
-            prompt += f"\nYêu cầu bắt buộc tuân thủ tuyệt đối:\n"
+            prompt += f"\nYêu cầu RÀNG BUỘC TUYỆT ĐỐI (Bắt buộc phải tuân theo 100%):\n"
             for idx, req in enumerate(list_bb, 1):
                 prompt += f"{idx}. {req}\n"
                 
@@ -365,7 +368,8 @@ try:
     elif task == "🔍 Phân tích ảnh":
         st.info("🔍 Hãy đưa ảnh cho AI soi thật kỹ xem bên trong có gì nhé!")
         if st.button("🚀 Tạo Prompt Phân Tích", type="primary"):
-            prompt_pt = "Hãy đóng vai là một chuyên gia phân tích hình ảnh. Hãy soi thật kỹ bức ảnh tôi vừa đính kèm và mô tả lại một cách cực kỳ chi tiết tất cả các yếu tố xuất hiện trong ảnh (bao gồm: Chủ thể chính, hành động, bối cảnh xung quanh, phong cách nghệ thuật, cách sắp đặt ánh sáng, góc máy ảnh, bố cục, tỷ lệ khung hình của bức ảnh và bầu không khí chung). Hãy ghi nhớ những thông tin này để làm dữ liệu tham khảo cho các yêu cầu chỉnh sửa hoặc tạo ảnh tiếp theo của tôi."
+            # Yêu cầu AI chỉ trả về gạch đầu dòng, không chào hỏi, không khuyên bảo
+            prompt_pt = "Hãy đóng vai là một chuyên gia phân tích hình ảnh. Hãy soi thật kỹ bức ảnh tôi vừa đính kèm và mô tả lại một cách cực kỳ chi tiết tất cả các yếu tố xuất hiện trong ảnh. Bắt buộc bao gồm các yếu tố sau: Chủ thể chính, Hành động, Đặc điểm nổi bật, Bối cảnh xung quanh, Phong cách nghệ thuật, Cách sắp đặt ánh sáng, Màu sắc chủ đạo, Góc máy ảnh/Bố cục, Bầu không khí chung và Tỷ lệ khung hình của bức ảnh.\n\nCHỈ THỊ NGHIÊM NGẶT: Bạn CHỈ ĐƯỢC trả về một danh sách các gạch đầu dòng chứa thông tin phân tích. TUYỆT ĐỐI KHÔNG mở bài chào hỏi, KHÔNG kết luận, KHÔNG đưa ra lời khuyên nâng cấp, KHÔNG giải thích dài dòng. Chỉ đưa ra các thông số thuần túy để tôi có thể dễ dàng sao chép làm dữ liệu cho câu lệnh tạo ảnh tiếp theo."
             st.success("🎉 Bạn rà chuột vào góc trên cùng bên phải của ô xám bên dưới, nhấn vào biểu tượng Copy là xong:")
             st.code(prompt_pt, language="text")
 
