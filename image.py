@@ -9,7 +9,7 @@ if "reset_key" not in st.session_state:
 if "edit_items" not in st.session_state:
     st.session_state.edit_items = [{"element": "", "level": "Không thay đổi"}]
     
-if "merge_images" not in st.session_state:Giữ nguyên 100% khuôn mặt (các) chủ thể chính trong ảnh gốc
+if "merge_images" not in st.session_state:
     st.session_state.merge_images = ["Ảnh 1", "Ảnh 2"]
 
 # Hàm reset toàn bộ dữ liệu (Sử dụng mẹo đổi key để ép Streamlit làm mới)
@@ -124,7 +124,7 @@ bat_buoc_opts = [
     "Giữ đúng màu sắc và kết cấu trang phục của ảnh gốc",
     "Không làm biến dạng tay, chân, ngón tay của chủ thể",
     "Hình ảnh phải sắc nét ở độ phân giải cao nhất (8K, cực kỳ chi tiết)",
-    "Chỉ xuất hiện duy nhất chủ thể chính, không có nhân vật phụ",
+    "Chỉ xuất hiện duy nhất 1 chủ thể, không có nhân vật phụ",
     "Giữ nguyên bối cảnh nền của ảnh gốc, chỉ thay đổi chủ thể"
 ]
 
